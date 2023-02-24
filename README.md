@@ -22,4 +22,11 @@
 - Migrate the Changes to Database.
 ```npx sequelize db:migrate```
 
-- 
+# Message Queue
+```
+    - [qps] -> query per secound !!
+    -  [Service 1 (100qps)] ----------------> [Service 2 (20 qps)]
+    # Solution 
+    - [Service 1 (100qps) Publisher] ----------> Message Queue [msg1,msg2 .... msg n] ----------> [Service 2 (20 qps) Subscriber]
+    
+ ```

@@ -1,7 +1,9 @@
 const amqplib = require("amqplib");
+const { EXCHANGE_NAME, MESSAGE_BROKER_URL } = require("../config/serverConfig");
 
 const createChannel = async () => {
     try {
+
         const connection = await amqplib.connect(MESSAGE_BROKER_URL);
         const channel = await connection.createChannel();
 
@@ -14,9 +16,10 @@ const createChannel = async () => {
     }
 }
 
-const subscribeMessage = async (channel, service, binding_key){
+const subscribeMessage = async (channel, service, binding_key) => {
 
-    const applicationQueue = await channel.assertQueue('EMAIL_QUEUE');
+    try {
+        const applicationQueue = await channel.assertQueue('EMAIL_QUEUE');
 
     channel.bindQueue(applicationQueue.queue, EXCHANGE_NAME, binding_key);
 
@@ -25,10 +28,22 @@ const subscribeMessage = async (channel, service, binding_key){
         console.log(msg.content.toString());
         channel.ack(msg);
     });
+    } catch (error) {
+       throw error; 
+    }
 
 }
 
+const publushMessage = async (channel, binding_key, message) => {
+    try {
+        await channel.assertQueue('EMAIL_QUEUE')
+        await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
-    subscribeMessage,
+    createChannel,
     subscribeMessage
 }

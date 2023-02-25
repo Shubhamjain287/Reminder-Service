@@ -43,6 +43,25 @@ class EmailService{
         }
     }
 
+    async subscribeEvents (payload){
+        let service = payload.service;
+        let data = payload.data;
+
+        const emailService = new EmailService();
+
+        switch (service) {
+            case `CREATE_TICKET`:
+                await emailService.createNotification(data);
+                break;
+            case `SEND_BASIC_MAIL`:
+                await emailService.sendBasicEmail(data);
+                break;
+            default:
+                console.log(`No Valid Event Received`);
+                break;
+        }
+    }
+
 }
 
 module.exports = EmailService;

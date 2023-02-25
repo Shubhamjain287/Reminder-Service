@@ -26,7 +26,17 @@ const subscribeMessage = async (channel, service, binding_key) => {
     channel.consume(applicationQueue.queue, (msg) => {
         console.log('Data Receiverd');
         console.log(msg.content.toString());
+
+        const payload = JSON.parse(msg.content.toString());
+        service(payload);
         channel.ack(msg);
+
+        // if(payload.service == "Demo_Service"){
+        //     console.log("Call Demo Service");
+        //     service.testingQueue(payload);
+        // }
+        // service(msg.content.toString());
+
     });
     } catch (error) {
        throw error; 
@@ -34,7 +44,7 @@ const subscribeMessage = async (channel, service, binding_key) => {
 
 }
 
-const publushMessage = async (channel, binding_key, message) => {
+const publishMessage = async (channel, binding_key, message) => {
     try {
         await channel.assertQueue('EMAIL_QUEUE')
         await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
@@ -45,5 +55,6 @@ const publushMessage = async (channel, binding_key, message) => {
 
 module.exports = {
     createChannel,
-    subscribeMessage
+    subscribeMessage,
+    publishMessage
 }

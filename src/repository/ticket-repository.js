@@ -38,15 +38,36 @@ class TicketRepository{
     }
 
     async update(ticketId,data){
-        const ticket = await NotificationTicket.findByPk(ticketId);
+        try {
+            const ticket = await NotificationTicket.findByPk(ticketId);
 
-        if(data.status){
-            ticket.status = data.status;
+            if(data.status){
+                ticket.status = data.status;
+            }
+            else{
+                ticket.subject = data.subject,
+                ticket.content = data.content,
+                ticket.recepientEmail = data.recepientEmail,
+                ticket.notificationTime = data.notificationTime
+            }
+
+            await ticket.save();
+
+            return ticket;
+        } catch (error) {
+            throw error;
         }
+    }
 
-        await ticket.save();
-
-        return ticket;
+    async destroy (ticketId){
+        try {
+            await NotificationTicket.destroy({
+                where: ticketId
+            });
+            return true;
+        } catch (error) {
+            throw error;
+        }
     }
 
 }

@@ -3,8 +3,8 @@ const bodyParser = require("body-parser");
 
 const { PORT, REMINDER_BINDING_KEY } = require("./config/serverConfig");
 const setupJobs = require("./utils/cron-jobs");
+const ApiRoute = require("./routes/index");
 
-const TicketController = require("./controllers/ticket-controller");
 const EmailService = require("./services/email-service");
 const emailService = new EmailService();
 
@@ -16,11 +16,10 @@ const server = async () => {
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
+    app.use("/api",ApiRoute);
 
     const channel = await createChannel();
     subscribeMessage(channel, emailService.subscribeEvents , REMINDER_BINDING_KEY);
-
-    app.post("/api/v1/tickets",TicketController.create);
 
     app.listen(PORT,()=>{
         console.log(`Server is running on PORT : ${PORT}`);

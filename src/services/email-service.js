@@ -43,6 +43,15 @@ class EmailService{
         }
     }
 
+    async deleteTicket(ticketId){
+        try {
+            const response = await this.ticketRepository.destroy(ticketId);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async subscribeEvents (payload){
         let service = payload.service;
         let data = payload.data;
